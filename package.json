@@ -1,0 +1,20 @@
+{
+  "name": "action-ghcr-prune",
+  "version": "1.0.0",
+  "description": "GitHub Action to prune containers from GitHub Container Registry (ghcr.io)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vlaurin/action-ghcr-prune.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vlaurin/action-ghcr-prune/issues"
+  },
+  "homepage": "https://github.com/vlaurin/action-ghcr-prune#readme"
+}
