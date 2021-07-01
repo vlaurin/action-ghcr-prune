@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/vlaurin/action-ghcr-prune/issues"
   },
-  "homepage": "https://github.com/vlaurin/action-ghcr-prune#readme"
+  "homepage": "https://github.com/vlaurin/action-ghcr-prune#readme",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0"
+  }
 }
