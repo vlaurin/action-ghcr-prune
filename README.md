@@ -64,3 +64,7 @@ As this action is destructive, it's recommended to test any changes to the confi
 ### count
 
 The count of container versions which were successfully pruned by the action.
+
+## License
+
+The scripts and documentation in this project are released under the [MIT License](LICENSE).
