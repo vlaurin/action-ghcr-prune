@@ -1,5 +1,8 @@
 name: 'GHCR pruning'
 description: 'GitHub Action to prune container versions from GitHub Container Registry (ghcr.io)'
+branding:
+  icon: 'scissors'  
+  color: 'blue'
 inputs:
   token:
     description: 'Secret access token with scopes `packages:read` and `packages:delete` and write permissions on the targeted container'
