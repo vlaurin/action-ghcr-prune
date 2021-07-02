@@ -1,4 +1,4 @@
-name: 'GHCR pruning'
+name: 'GHCR Pruning'
 description: 'GitHub Action to prune container versions from GitHub Container Registry (ghcr.io)'
 branding:
   icon: 'scissors'  
