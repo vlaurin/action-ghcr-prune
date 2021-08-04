@@ -3,7 +3,6 @@ const github = require('@actions/github');
 const {getPruningList} = require('./src/pruning');
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24;
-const PAGE_SIZE = 100;
 
 const asBoolean = (v) => 'true' == String(v);
 
@@ -37,12 +36,12 @@ const versionSummary = (version) => ({
   tags: version.metadata.container.tags,
 });
 
-const listOrgContainerVersions = (octokit) => (organization, container) => (page = 1) => octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+const listOrgContainerVersions = (octokit) => (organization, container) => (pageSize, page = 1) => octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
   package_type: 'container',
   org: organization,
   package_name: container,
   page,
-  per_page: PAGE_SIZE,
+  per_page: pageSize,
   state: 'active',
 });
 

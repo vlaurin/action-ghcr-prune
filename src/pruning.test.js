@@ -46,8 +46,8 @@ describe('getPruningList', () => {
   });
 
   it('should crawl through pages of versions', async () => {
-    const listVersions = (page) => Promise.resolve({
-      data: Array(50 * (3 - page)).fill(0).map((_, i) => version(((page - 1) * 100) + i, `1.0.${i}`, '2019-11-05T22:49:04Z')),
+    const listVersions = (pageSize, page) => Promise.resolve({
+      data: Array((pageSize / 2) * (3 - page)).fill(0).map((_, i) => version(((page - 1) * 100) + i, `1.0.${i}`, '2019-11-05T22:49:04Z')),
     });
     const pruningFilter = ({id}) => id % 2 === 0;
 

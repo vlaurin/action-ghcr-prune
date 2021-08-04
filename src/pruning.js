@@ -8,7 +8,7 @@ const getPruningList = (listVersions, pruningFilter) => async () => {
   console.log('Crawling through all versions to build pruning list...');
 
   do {
-    const {data: versions} = await listVersions(page);
+    const {data: versions} = await listVersions(PAGE_SIZE, page);
     lastPageSize = versions.length;
 
     const pagePruningList = versions.filter(pruningFilter);
