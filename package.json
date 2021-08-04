@@ -4,7 +4,7 @@
   "description": "GitHub Action to prune containers from GitHub Container Registry (ghcr.io)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,8 @@
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/github": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
   }
 }
