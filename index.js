@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const {getPruningList} = require('./src/pruning');
 
 const MS_IN_DAY = 1000 * 60 * 60 * 24;
 const PAGE_SIZE = 100;
@@ -44,28 +45,6 @@ const listOrgContainerVersions = (octokit) => (organization, container) => (page
   per_page: PAGE_SIZE,
   state: 'active',
 });
-
-const getPruningList = (listVersions, pruningFilter) => async () => {
-  let pruningList = [];
-  let page = 1;
-  let lastPageSize = 0;
-
-  console.log('Crawling through all versions to build pruning list...');
-
-  do {
-    const {data: versions} = await listVersions(page);
-    lastPageSize = versions.length;
-
-    const pagePruningList = versions.filter(pruningFilter);
-    pruningList = [...pruningList, ...pagePruningList];
-
-    console.log(`Found ${pagePruningList.length} versions to prune out of ${lastPageSize} on page ${page}`);
-
-    page++;
-  } while (lastPageSize >= PAGE_SIZE);
-
-  return pruningList;
-};
 
 const deleteOrgContainerVersion = (octokit) => (organization, container) => (version) => octokit.rest.packages.deletePackageVersionForOrg({
   package_type: 'container',
