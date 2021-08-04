@@ -21,6 +21,7 @@ steps:
       container: your-container
       dry-run: true # Dry-run first, then change to `false`
       older-than: 7 # days
+      keep-last: 2
       untagged: true
 ```
 
@@ -48,6 +49,10 @@ As this action is destructive, it's recommended to test any changes to the confi
 ### older-than
 
 **Optional** Minimum age in days of a version before it is pruned. Defaults to `0` which matches all versions of a container.
+
+### keep-last
+
+**Optional** Count of most recent, matching containers to exclude from pruning. Defaults to `0` which means that all matching containers are pruned.
 
 ### untagged
 

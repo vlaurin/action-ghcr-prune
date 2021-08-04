@@ -1,7 +1,7 @@
 name: 'GHCR Pruning'
 description: 'GitHub Action to prune container versions from GitHub Container Registry (ghcr.io)'
 branding:
-  icon: 'scissors'  
+  icon: 'scissors'
   color: 'blue'
 inputs:
   token:
@@ -21,6 +21,10 @@ inputs:
     description: 'Minimum age in days of container versions to prune'
     required: false
     default: 0
+  keep-last:
+    description: 'Count of most recent, matching containers to exclude from pruning'
+    required: false
+    default: 0
   untagged:
     description: 'Whether untagged container versions should be pruned'
     required: false
@@ -29,7 +33,7 @@ inputs:
     description: 'Regular expression matching tagged container versions which should be pruned'
     required: false
 output:
-  count: 
+  count:
     description: 'Count of container versions that were pruned'
 runs:
   using: 'node12'

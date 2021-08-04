@@ -56,4 +56,24 @@ describe('getPruningList', () => {
     expect(pruningList.length).toEqual(75);
     expect(pruningList[71]).toEqual(version(142, '1.0.42', '2019-11-05T22:49:04Z'));
   });
+
+  it('should keep last `x` versions sorted by created date', async () => {
+    const listVersions = () => Promise.resolve({
+      data: [
+        version(100001, '1.0.1', '2020-01-29T15:42:11Z', '2021-05-29T15:42:11Z'),
+        version(100003, '1.0.3', '2020-10-29T15:42:11Z', '2021-04-29T15:42:11Z'),
+        version(100002, '1.0.2', '2020-03-29T15:42:11Z', '2021-03-29T15:42:11Z'),
+        version(100004, '1.0.4', '2020-11-05T22:49:04Z', '2020-11-05T22:49:04Z'),
+        version(100000, '1.0.0', '2019-10-29T15:42:11Z', '2019-10-29T15:42:11Z'),
+      ],
+    });
+    const pruningFilter = () => true;
+
+    const pruningList = await getPruningList(listVersions, pruningFilter)(3);
+
+    expect(pruningList).toEqual([
+      version(100001, '1.0.1', '2020-01-29T15:42:11Z', '2021-05-29T15:42:11Z'),
+      version(100000, '1.0.0', '2019-10-29T15:42:11Z', '2019-10-29T15:42:11Z'),
+    ]);
+  });
 });

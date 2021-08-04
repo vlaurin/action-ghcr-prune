@@ -85,6 +85,7 @@ const run = async () => {
     const dryRun = asBoolean(core.getInput('dry-run'));
 
     const olderThan = Number(core.getInput('older-than'));
+    const keepLast = Number(core.getInput('keep-last'));
     const untagged = asBoolean(core.getInput('untagged'));
     const tagRegex = core.getInput('tag-regex');
 
@@ -94,7 +95,7 @@ const run = async () => {
     const filterVersion = versionFilter({olderThan, untagged, tagRegex});
     const pruneVersion = dryRun ? dryRunDelete : deleteOrgContainerVersion(octokit)(organization, container);
 
-    const pruningList = await getPruningList(listVersions, filterVersion)();
+    const pruningList = await getPruningList(listVersions, filterVersion)(keepLast);
 
     console.log(`Found a total of ${pruningList.length} versions to prune`);
 
