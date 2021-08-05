@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  quality_checks:
+    name: Quality checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Setup NodeJS 14
+        uses: actions/setup-node@v2.3.2
+        with:
+          node-version: '14.x'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+      - name: Run tests
+        run: npm test -- --coverage
