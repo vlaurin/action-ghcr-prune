@@ -70,6 +70,18 @@ As this action is destructive, it's recommended to test any changes to the confi
 
 The count of container versions which were successfully pruned by the action.
 
+## Contribute
+
+### Build
+
+This action is compiled into a single JS file using [@vercel/ncc](https://github.com/vercel/ncc). This produces a `dist/` folder which must be checked in with the code.
+
+Compilation can be done using:
+
+```bash
+npm run build
+```
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE).
