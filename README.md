@@ -25,6 +25,15 @@ steps:
       untagged: true
 ```
 
+## Permissions
+
+This action uses the Github Rest API [deletePackageVersionForOrg()](https://octokit.github.io/rest.js/v18#packages-delete-package-version-for-org) resource which states:
+> To use this endpoint, you must have admin permissions in the organization and authenticate using an access token with the `packages:read` and `packages:delete` scopes. In addition:
+> [...]
+> If `package_type` is container, you must also have admin permissions to the container you want to delete.
+
+As a result, for this action to work, the token must be associated to a user who has admin permissions for both the organization and the package. If this is not the case, then dry-runs will work as expected but actual runs will fail with a `Package not found` error when attempting to delete versions.
+
 ## Inputs
 
 ### token
