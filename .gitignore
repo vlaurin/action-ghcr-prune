@@ -103,3 +103,6 @@ typings/
 
 # TernJS port file
 .tern-port
+
+# idea project files
+.idea
