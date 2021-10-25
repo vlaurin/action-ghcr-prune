@@ -43,7 +43,7 @@ As a result, for this action to work, the token must be associated to a user who
 
 ### organization
 
-**Required** Name of the organisation owning the container package.
+Name of the organization owning the container package. (if empty, the packages of the authenticated user are considered)
 
 ### container
 

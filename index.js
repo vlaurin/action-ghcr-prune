@@ -45,9 +45,23 @@ const listOrgContainerVersions = (octokit) => (organization, container) => (page
   state: 'active',
 });
 
+const listUserContainerVersions = (octokit) => (container) => (pageSize, page = 1) => octokit.rest.packages.getAllPackageVersionsForPackageOwnedByAuthenticatedUser({
+  package_type: 'container',
+  package_name: container,
+  page,
+  per_page: pageSize,
+  state: 'active',
+});
+
 const deleteOrgContainerVersion = (octokit) => (organization, container) => (version) => octokit.rest.packages.deletePackageVersionForOrg({
   package_type: 'container',
   org: organization,
+  package_name: container,
+  package_version_id: version.id,
+});
+
+const deleteUserContainerVersion = (octokit) => (container) => (version) => octokit.rest.packages.deletePackageVersionForAuthenticatedUser({
+  package_type: 'container',
   package_name: container,
   package_version_id: version.id,
 });
@@ -91,9 +105,16 @@ const run = async () => {
 
     const octokit = github.getOctokit(token);
 
-    const listVersions = listOrgContainerVersions(octokit)(organization, container);
+    let listVersions
+    let pruneVersion
+    if (organization.length !== 0) {
+      listVersions = listOrgContainerVersions(octokit)(organization, container);
+      pruneVersion = dryRun ? dryRunDelete : deleteOrgContainerVersion(octokit)(organization, container);
+    } else {
+      listVersions = listUserContainerVersions(octokit)(container);
+      pruneVersion = dryRun ? dryRunDelete : deleteUserContainerVersion(octokit)(container);
+    }
     const filterVersion = versionFilter({olderThan, untagged, tagRegex});
-    const pruneVersion = dryRun ? dryRunDelete : deleteOrgContainerVersion(octokit)(organization, container);
 
     const pruningList = await getPruningList(listVersions, filterVersion)(keepLast);
 

@@ -9,7 +9,10 @@ inputs:
     required: true
   organization:
     description: 'Organisation to which the container belongs'
-    required: true
+    required: false
+  user:
+    description: 'User to which the container belongs'
+    required: false
   container:
     description: 'Name of the container to prune'
     required: true
