@@ -1,8 +1,6 @@
 # action-ghcr-prune
 GitHub Action to prune/delete container versions from GitHub Container Registry (ghcr.io).
 
-**Please note:** Currently, this action only works for containers owned by a GitHub organisation.
-
 ## Word of caution
 
 As this action is destructive, it's recommended to test any changes to the configuration of the action with a dry-run to ensure the expected versions are matched for pruning. For more details about dry-runs, see the [dry-run input](#dry-run).
