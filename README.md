@@ -1,7 +1,9 @@
 # action-ghcr-prune
 GitHub Action to prune/delete container versions from GitHub Container Registry (ghcr.io).
 
-## Word of caution
+## ⚠️ Word of caution
+
+By default, both `untagged` and `tag-regex` inputs are disabled and as result no versions will be matched for pruning. Either or both inputs must be explicitly configured for versions to be pruned. This behaviour helps to avoid pruning versions by mistake when first configuring this action.
 
 As this action is destructive, it's recommended to test any changes to the configuration of the action with a dry-run to ensure the expected versions are matched for pruning. For more details about dry-runs, see the [dry-run input](#dry-run).
 
