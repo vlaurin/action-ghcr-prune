@@ -1,33 +1,9 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const {getPruningList} = require('./src/pruning');
-
-const MS_IN_DAY = 1000 * 60 * 60 * 24;
+const {versionFilter} = require('./src/version-filter');
 
 const asBoolean = (v) => 'true' == String(v);
-
-const daysBetween = (startDate, endDate = new Date()) => Math.floor((endDate.getTime() - startDate.getTime()) / MS_IN_DAY);
-
-const versionFilter = ({olderThan, untagged, tagRegex}) => (version) => {
-  const createdAt = new Date(version.created_at);
-  const age = daysBetween(createdAt);
-
-  if (olderThan > age) {
-    return false;
-  }
-
-  const tags = version.metadata.container.tags;
-
-  if (untagged && (!tags || !tags.length)) {
-    return true;
-  }
-
-  if (tagRegex && tags && tags.some((tag) => tag.match(tagRegex))) {
-    return true;
-  }
-
-  return false;
-};
 
 const versionSummary = (version) => ({
   id: version.id,
