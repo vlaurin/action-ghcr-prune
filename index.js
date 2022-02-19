@@ -6,7 +6,7 @@ const {
   listOrgContainerVersions,
   listUserContainerVersions,
 } = require('./src/octokit');
-const {getPruningList} = require('./src/pruning');
+const {getPruningList, prune} = require('./src/pruning');
 const {versionFilter} = require('./src/version-filter');
 
 const asBoolean = (v) => 'true' == String(v);
@@ -22,25 +22,6 @@ const dryRunDelete = (version) => new Promise((resolve) => {
   console.log(`Dry-run pruning of: `, versionSummary(version));
   resolve();
 });
-
-const prune = (pruneVersion) => async (pruningList) => {
-  console.log(`Pruning ${pruningList.length} versions...`);
-  let pruned = 0;
-  try {
-    for (const version of pruningList) {
-      console.log(`Pruning version #${version.id} named '${version.name}'...`);
-      await pruneVersion(version);
-      pruned++;
-    }
-  } catch (error) {
-    console.error(`Failed to prune because of: `, error);
-    core.setFailed(error.message);
-  }
-
-  console.log(`Pruned ${pruned} versions`);
-
-  return pruned;
-};
 
 const run = async () => {
   try {
@@ -73,6 +54,10 @@ const run = async () => {
     console.log(`Found a total of ${pruningList.length} versions to prune`);
 
     const prunedCount = await prune(pruneVersion)(pruningList);
+
+    if (prunedCount !== pruningList.length) {
+      core.setFailed(`Failed to prune some versions: ${prunedCount} out of ${pruningList.length} versions were pruned`);
+    }
 
     core.setOutput("count", prunedCount);
   } catch (error) {
