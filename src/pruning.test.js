@@ -1,4 +1,4 @@
-const {getPruningList} = require('./pruning');
+const {getPruningList, prune} = require('./pruning');
 
 describe('getPruningList', () => {
 
@@ -75,5 +75,60 @@ describe('getPruningList', () => {
       version(100001, '1.0.1', '2020-01-29T15:42:11Z', '2021-05-29T15:42:11Z'),
       version(100000, '1.0.0', '2019-10-29T15:42:11Z', '2019-10-29T15:42:11Z'),
     ]);
+  });
+});
+
+describe('prune', () => {
+
+  const version = (id) => ({ id, name: `v-${id}` });
+
+  it('should prune all versions in pruning list', async () => {
+    const pruneVersion = jest.fn();
+
+    const pruningList = [
+      version(100001),
+      version(100000),
+    ];
+
+    const prunedCount = await prune(pruneVersion)(pruningList);
+
+    expect(prunedCount).toEqual(2);
+    expect(pruneVersion).toHaveBeenCalledTimes(2);
+    expect(pruneVersion).nthCalledWith(1, pruningList[0]);
+    expect(pruneVersion).nthCalledWith(2, pruningList[1]);
+  });
+
+  it('should return 0 when all pruning failed', async () => {
+    const pruneVersion = jest.fn()
+                             .mockRejectedValue(Error('Pruning error'));
+
+    const pruningList = [
+      version(100001),
+      version(100000),
+    ];
+
+    const prunedCount = await prune(pruneVersion)(pruningList);
+
+    expect(prunedCount).toEqual(0);
+  });
+
+  it('should interrupt pruning when encountering error', async () => {
+    const pruneVersion = jest.fn()
+                             .mockResolvedValueOnce()
+                             .mockRejectedValueOnce(Error('Pruning error'))
+                             .mockResolvedValueOnce();
+
+    const pruningList = [
+      version(100000),
+      version(100001),
+      version(100002),
+    ];
+
+    const prunedCount = await prune(pruneVersion)(pruningList);
+
+    expect(prunedCount).toEqual(1);
+    expect(pruneVersion).toHaveBeenCalledTimes(2);
+    expect(pruneVersion).nthCalledWith(1, pruningList[0]);
+    expect(pruneVersion).nthCalledWith(2, pruningList[1]);
   });
 });

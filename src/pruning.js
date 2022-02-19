@@ -30,6 +30,25 @@ const getPruningList = (listVersions, pruningFilter) => async (keepLast = 0) => 
   return pruningList;
 };
 
+const prune = (pruneVersion) => async (pruningList) => {
+  console.log(`Pruning ${pruningList.length} versions...`);
+  let pruned = 0;
+  try {
+    for (const version of pruningList) {
+      console.log(`Pruning version #${version.id} named '${version.name}'...`);
+      await pruneVersion(version);
+      pruned++;
+    }
+  } catch (error) {
+    console.error(`Failed to prune because of: `, error);
+  }
+
+  console.log(`Pruned ${pruned} versions`);
+
+  return pruned;
+};
+
 module.exports = {
   getPruningList,
+  prune,
 };
