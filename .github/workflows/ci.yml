@@ -4,9 +4,11 @@ on:
     branches:
       - main
   pull_request:
+permissions:
+  packages: read
 jobs:
-  quality_checks:
-    name: Quality checks
+  automated_tests:
+    name: Unit & integration tests
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -21,5 +23,64 @@ jobs:
 
       - name: Install deps
         run: npm ci
+
       - name: Run tests
         run: npm test -- --coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Should prune untagged versions
+        uses: ./ # Itself
+        id: test_prune_untagged
+        with:
+          token: ${{ secrets.TEST_GH_TOKEN }}
+          container: test-action-ghcr-prune
+          dry-run: true
+          untagged: true
+          keep-last: 1
+
+      - name: Expect 2 untagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.test_prune_untagged.outputs.count }};
+            const expectedCount = 2;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.test_prune_untagged.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452193,15452086]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
+
+      - name: Should prune tagged versions
+        uses: ./ # Itself
+        id: test_prune_tagged
+        with:
+          token: ${{ secrets.TEST_GH_TOKEN }}
+          container: test-action-ghcr-prune
+          dry-run: true
+          tag-regex: ^pr-\d{3}
+
+      - name: Expect 3 tagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.test_prune_tagged.outputs.count }};
+            const expectedCount = 3;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.test_prune_tagged.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452486,15452460,15452388]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
