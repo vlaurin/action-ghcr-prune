@@ -83,6 +83,10 @@ The count of container versions which were successfully pruned by the action.
 
 An array containing all the version IDs successfully pruned as part of the run.
 
+### dryRun
+
+Boolean flag indicating whether the execution was a dry-run, as per input `dry-run`. This output can be used to determine if other outputs relates to a dry-run or actual pruning of versions.
+
 ## Contribute
 
 ### Build
