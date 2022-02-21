@@ -79,6 +79,10 @@ As this action is destructive, it's recommended to test any changes to the confi
 
 The count of container versions which were successfully pruned by the action.
 
+### prunedVersionIds
+
+An array containing all the version IDs successfully pruned as part of the run.
+
 ## Contribute
 
 ### Build

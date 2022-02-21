@@ -90,9 +90,9 @@ describe('prune', () => {
       version(100000),
     ];
 
-    const prunedCount = await prune(pruneVersion)(pruningList);
+    const pruned = await prune(pruneVersion)(pruningList);
 
-    expect(prunedCount).toEqual(2);
+    expect(pruned).toEqual([100001, 100000]);
     expect(pruneVersion).toHaveBeenCalledTimes(2);
     expect(pruneVersion).nthCalledWith(1, pruningList[0]);
     expect(pruneVersion).nthCalledWith(2, pruningList[1]);
@@ -107,9 +107,9 @@ describe('prune', () => {
       version(100000),
     ];
 
-    const prunedCount = await prune(pruneVersion)(pruningList);
+    const pruned = await prune(pruneVersion)(pruningList);
 
-    expect(prunedCount).toEqual(0);
+    expect(pruned).toEqual([]);
   });
 
   it('should interrupt pruning when encountering error', async () => {
@@ -124,9 +124,9 @@ describe('prune', () => {
       version(100002),
     ];
 
-    const prunedCount = await prune(pruneVersion)(pruningList);
+    const pruned = await prune(pruneVersion)(pruningList);
 
-    expect(prunedCount).toEqual(1);
+    expect(pruned).toEqual([100000]);
     expect(pruneVersion).toHaveBeenCalledTimes(2);
     expect(pruneVersion).nthCalledWith(1, pruningList[0]);
     expect(pruneVersion).nthCalledWith(2, pruningList[1]);
