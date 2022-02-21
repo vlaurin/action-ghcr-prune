@@ -53,13 +53,14 @@ const run = async () => {
 
     console.log(`Found a total of ${pruningList.length} versions to prune`);
 
-    const prunedCount = await prune(pruneVersion)(pruningList);
+    const prunedList = await prune(pruneVersion)(pruningList);
 
-    if (prunedCount !== pruningList.length) {
-      core.setFailed(`Failed to prune some versions: ${prunedCount} out of ${pruningList.length} versions were pruned`);
+    if (prunedList.length !== pruningList.length) {
+      core.setFailed(`Failed to prune some versions: ${prunedList.length} out of ${pruningList.length} versions were pruned`);
     }
 
-    core.setOutput("count", prunedCount);
+    core.setOutput('count', prunedList.length);
+    core.setOutput('prunedVersionIds', prunedList);
   } catch (error) {
     core.setFailed(error.message);
   }
