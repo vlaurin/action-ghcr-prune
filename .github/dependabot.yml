@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - 'priority:medium'
+      - 'type:dependency-upgrade'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - 'priority:low'
+      - 'type:dependency-upgrade'
