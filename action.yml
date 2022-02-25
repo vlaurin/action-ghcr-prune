@@ -28,6 +28,12 @@ inputs:
     description: 'Count of most recent, matching containers to exclude from pruning'
     required: false
     default: 0
+  keep-tags:
+    description: |
+      List of tags to exclude from pruning, one per line.
+      Any version with at least one matching tag will be excluded.
+      Matching is exact and case-sensitive.
+    required: false
   untagged:
     description: 'Whether untagged container versions should be pruned'
     required: false

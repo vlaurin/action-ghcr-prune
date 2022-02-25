@@ -31,10 +31,13 @@ const run = async () => {
 
     const dryRun = asBoolean(core.getInput('dry-run'));
 
-    const olderThan = Number(core.getInput('older-than'));
     const keepLast = Number(core.getInput('keep-last'));
-    const untagged = asBoolean(core.getInput('untagged'));
-    const tagRegex = core.getInput('tag-regex');
+    const filterOptions = {
+      olderThan: Number(core.getInput('older-than')),
+      untagged: asBoolean(core.getInput('untagged')),
+      tagRegex: core.getInput('tag-regex'),
+      keepTags: core.getMultilineInput('keep-tags'),
+    };
 
     const octokit = github.getOctokit(token);
 
@@ -47,7 +50,7 @@ const run = async () => {
       listVersions = listUserContainerVersions(octokit)(container);
       pruneVersion = dryRun ? dryRunDelete : deleteUserContainerVersion(octokit)(container);
     }
-    const filterVersion = versionFilter({olderThan, untagged, tagRegex});
+    const filterVersion = versionFilter(filterOptions);
 
     const pruningList = await getPruningList(listVersions, filterVersion)(keepLast);
 
