@@ -63,6 +63,12 @@ As this action is destructive, it's recommended to test any changes to the confi
 
 **Optional** Count of most recent, matching containers to exclude from pruning. Defaults to `0` which means that all matching containers are pruned.
 
+### keep-tags
+
+**Optional** List of tags to exclude from pruning, one per line.
+Any version with at least one matching tag will be excluded.
+Matching is exact and case-sensitive.
+
 ### untagged
 
 **Optional** Boolean controlling whether untagged versions should be pruned (`true`) or not (`false`). Defaults to `false`.

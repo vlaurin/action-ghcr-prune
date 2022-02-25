@@ -58,14 +58,16 @@ jobs:
               core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
             }
 
-      - name: Should prune tagged versions
+      - name: Should prune tagged versions without exclusions
         uses: ./ # Itself
         id: test_prune_tagged
         with:
           token: ${{ secrets.TEST_GH_TOKEN }}
           container: test-action-ghcr-prune
           dry-run: true
-          tag-regex: ^pr-\d{3}
+          tag-regex: ^pr-
+          keep-tags: |
+            pr-demo
 
       - name: Expect 3 tagged versions to be pruned
         uses: actions/github-script@v6
