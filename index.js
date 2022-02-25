@@ -37,6 +37,7 @@ const run = async () => {
       untagged: asBoolean(core.getInput('untagged')),
       tagRegex: core.getInput('tag-regex'),
       keepTags: core.getMultilineInput('keep-tags'),
+      keepTagsRegexes: core.getMultilineInput('keep-tags-regexes'),
     };
 
     const octokit = github.getOctokit(token);

@@ -86,3 +86,33 @@ jobs:
             if (actualPruned !== expectedPruned) {
               core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
             }
+
+      - name: Should prune tagged versions without RegEx exclusions
+        uses: ./ # Itself
+        id: test_prune_tagged_keep_tags_regexes
+        with:
+          token: ${{ secrets.TEST_GH_TOKEN }}
+          container: test-action-ghcr-prune
+          dry-run: true
+          tag-regex: ^pr-
+          keep-tags-regexes: |
+            ^pr-[a-z]+
+            ^pr-\d\d2
+
+      - name: Expect 2 tagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.test_prune_tagged_keep_tags_regexes.outputs.count }};
+            const expectedCount = 2;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.test_prune_tagged_keep_tags_regexes.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452486,15452388]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
