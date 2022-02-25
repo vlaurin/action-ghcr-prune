@@ -69,6 +69,11 @@ As this action is destructive, it's recommended to test any changes to the confi
 Any version with at least one matching tag will be excluded.
 Matching is exact and case-sensitive.
 
+### keep-tags-regexes
+
+**Optional** List of regular expressions for tags to exclude from pruning, one per line.
+Each expression will be evaluated against all tags of a version. Any version with at least one tag matching the expression will be excluded from pruning.
+
 ### untagged
 
 **Optional** Boolean controlling whether untagged versions should be pruned (`true`) or not (`false`). Defaults to `false`.

@@ -141,4 +141,26 @@ describe('versionFilter', () => {
       Version(YEARS_AGO, ['pr-456', 'pr-alpha']),
     ]);
   });
+
+  it('should NOT prune any version with a tag matching a regex to keep', () => {
+    const versions = [
+      Version(YEARS_AGO, ['pr-123', 'pr-demo']),
+      Version(YEARS_AGO, ['pr-456', 'pr-alpha']),
+      Version(YEARS_AGO, ['pr-789', 'pr-beta']),
+    ]
+
+    const pruningFilter = versionFilter({
+      olderThan: 0,
+      untagged: false,
+      tagRegex: '^pr-',
+      keepTagsRegexes: [
+        '^pr-d\\w+',
+        '^pr-b\\w+',
+      ],
+    });
+
+    expect(versions.filter(pruningFilter)).toEqual([
+      Version(YEARS_AGO, ['pr-456', 'pr-alpha']),
+    ]);
+  });
 });
