@@ -1,6 +1,6 @@
 {
   "name": "action-ghcr-prune",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "GitHub Action to prune containers from GitHub Container Registry (ghcr.io)",
   "main": "dist/index.js",
   "scripts": {
