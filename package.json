@@ -20,7 +20,7 @@
   "homepage": "https://github.com/vlaurin/action-ghcr-prune#readme",
   "dependencies": {
     "@actions/core": "^1.4.0",
-    "@actions/github": "^5.0.0"
+    "@actions/github": "^5.0.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.29.0",
