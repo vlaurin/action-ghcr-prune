@@ -34,7 +34,8 @@ jobs:
         uses: ./ # Itself
         id: test_prune_untagged
         with:
-          token: ${{ secrets.TEST_GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
           untagged: true
@@ -62,7 +63,8 @@ jobs:
         uses: ./ # Itself
         id: test_prune_tagged
         with:
-          token: ${{ secrets.TEST_GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
           tag-regex: ^pr-
@@ -91,7 +93,8 @@ jobs:
         uses: ./ # Itself
         id: test_prune_tagged_keep_tags_regexes
         with:
-          token: ${{ secrets.TEST_GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
           tag-regex: ^pr-
