@@ -1,3 +1,5 @@
+const core = require('@actions/core');
+
 const PAGE_SIZE = 100;
 
 const sortByVersionCreationDesc = (first, second) => - first.created_at.localeCompare(second.created_at);
@@ -7,7 +9,7 @@ const getPruningList = (listVersions, pruningFilter) => async (keepLast = 0) => 
   let page = 1;
   let lastPageSize = 0;
 
-  console.log('Crawling through all versions to build pruning list...');
+  core.info('Crawling through all versions to build pruning list...');
 
   do {
     const {data: versions} = await listVersions(PAGE_SIZE, page);
@@ -16,13 +18,13 @@ const getPruningList = (listVersions, pruningFilter) => async (keepLast = 0) => 
     const pagePruningList = versions.filter(pruningFilter);
     pruningList = [...pruningList, ...pagePruningList];
 
-    console.log(`Found ${pagePruningList.length} versions to prune out of ${lastPageSize} on page ${page}`);
+    core.info(`Found ${pagePruningList.length} versions to prune out of ${lastPageSize} on page ${page}`);
 
     page++;
   } while (lastPageSize >= PAGE_SIZE);
 
   if (keepLast > 0) {
-    console.log(`Keeping the last ${keepLast} versions, sorted by creation date`);
+    core.info(`Keeping the last ${keepLast} versions, sorted by creation date`);
     return pruningList.sort(sortByVersionCreationDesc)
                       .slice(keepLast);
   }
@@ -31,19 +33,23 @@ const getPruningList = (listVersions, pruningFilter) => async (keepLast = 0) => 
 };
 
 const prune = (pruneVersion) => async (pruningList) => {
-  console.log(`Pruning ${pruningList.length} versions...`);
   const pruned = [];
   try {
+    core.startGroup(`Pruning ${pruningList.length} versions...`);
+
     for (const version of pruningList) {
-      console.log(`Pruning version #${version.id} named '${version.name}'...`);
+      core.info(`Pruning version #${version.id} named '${version.name}'...`);
       await pruneVersion(version);
       pruned.push(version.id);
     }
+
+    core.endGroup();
   } catch (error) {
-    console.error(`Failed to prune because of: `, error);
+    core.endGroup();
+    core.error(`Failed to prune because of: ${error}`);
   }
 
-  console.log(`Pruned ${pruned.length} versions`);
+  core.notice(`Pruned ${pruned.length} versions`);
 
   return pruned;
 };
