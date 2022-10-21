@@ -13,7 +13,7 @@ const {versionFilter} = require('./src/version-filter');
 
 const asBoolean = (v) => 'true' == String(v);
 
-const versionSummary = (version) => ({
+const versionSummary = (version) => JSON.stringify({
   id: version.id,
   name: version.name,
   created_at: version.created_at,
@@ -21,7 +21,7 @@ const versionSummary = (version) => ({
 });
 
 const dryRunDelete = (version) => new Promise((resolve) => {
-  console.log(`Dry-run pruning of: `, versionSummary(version));
+  core.info(`Dry-run pruning of: ${versionSummary(version)}`);
   resolve();
 });
 
@@ -67,7 +67,7 @@ const run = async () => {
 
     const pruningList = await getPruningList(listVersions, filterVersion)(keepLast);
 
-    console.log(`Found a total of ${pruningList.length} versions to prune`);
+    core.info(`Found a total of ${pruningList.length} versions to prune`);
 
     const prunedList = await prune(pruneVersion)(pruningList);
 
