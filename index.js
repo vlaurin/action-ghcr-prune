@@ -1,10 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const {
+  deleteAuthenticatedUserContainerVersion,
   deleteOrgContainerVersion,
-  deleteUserContainerVersion,
+  listAuthenticatedUserContainerVersions,
   listOrgContainerVersions,
-  listUserContainerVersions,
 } = require('./src/octokit');
 const {getPruningList, prune} = require('./src/pruning');
 const {versionFilter} = require('./src/version-filter');
@@ -42,14 +42,14 @@ const run = async () => {
 
     const octokit = github.getOctokit(token);
 
-    let listVersions
-    let pruneVersion
+    let listVersions;
+    let pruneVersion;
     if (organization.length !== 0) {
       listVersions = listOrgContainerVersions(octokit)(organization, container);
       pruneVersion = dryRun ? dryRunDelete : deleteOrgContainerVersion(octokit)(organization, container);
     } else {
-      listVersions = listUserContainerVersions(octokit)(container);
-      pruneVersion = dryRun ? dryRunDelete : deleteUserContainerVersion(octokit)(container);
+      listVersions = listAuthenticatedUserContainerVersions(octokit)(container);
+      pruneVersion = dryRun ? dryRunDelete : deleteAuthenticatedUserContainerVersion(octokit)(container);
     }
     const filterVersion = versionFilter(filterOptions);
 
