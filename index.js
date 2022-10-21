@@ -3,8 +3,10 @@ const github = require('@actions/github');
 const {
   deleteAuthenticatedUserContainerVersion,
   deleteOrgContainerVersion,
+  deleteUserContainerVersion,
   listAuthenticatedUserContainerVersions,
   listOrgContainerVersions,
+  listUserContainerVersions,
 } = require('./src/octokit');
 const {getPruningList, prune} = require('./src/pruning');
 const {versionFilter} = require('./src/version-filter');
@@ -27,6 +29,13 @@ const run = async () => {
   try {
     const token = core.getInput('token');
     const organization = core.getInput('organization');
+    const user = core.getInput('user');
+
+    if (organization && user) {
+      core.setFailed('Inputs `organization` and `user` are mutually exclusive and must not both be provided in the same run.');
+      return;
+    }
+
     const container = core.getInput('container');
 
     const dryRun = asBoolean(core.getInput('dry-run'));
@@ -44,7 +53,10 @@ const run = async () => {
 
     let listVersions;
     let pruneVersion;
-    if (organization.length !== 0) {
+    if (user) {
+      listVersions = listUserContainerVersions(octokit)(user, container);
+      pruneVersion = dryRun ? dryRunDelete : deleteUserContainerVersion(octokit)(user, container);
+    } else if (organization) {
       listVersions = listOrgContainerVersions(octokit)(organization, container);
       pruneVersion = dryRun ? dryRunDelete : deleteOrgContainerVersion(octokit)(organization, container);
     } else {

@@ -8,10 +8,10 @@ inputs:
     description: 'Secret access token with scopes `packages:read` and `packages:delete` and write permissions on the targeted container'
     required: true
   organization:
-    description: 'Organisation to which the container belongs'
+    description: 'Organisation to which the container belongs, mutually exclusive with input `user`'
     required: false
   user:
-    description: 'User to which the container belongs'
+    description: 'User to which the container belongs, mutually exclusive with input `organization`'
     required: false
   container:
     description: 'Name of the container to prune'

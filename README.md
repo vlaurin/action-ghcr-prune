@@ -43,7 +43,19 @@ As a result, for this action to work, the token must be associated to a user who
 
 ### organization
 
-Name of the organization owning the container package. (if empty, the packages of the authenticated user are considered)
+Name of the organization owning the container package.
+
+:warning: This input is mutually exclusive with input `user`.
+Only one of the 2 can be used at any time.
+If neither are provided, then the packages of the authenticated user (cf. `token`) are considered.
+
+### user
+
+Name of the user owning the container package.
+
+:warning: This input is mutually exclusive with input `organization`.
+Only one of the 2 can be used at any time.
+If neither are provided, then the packages of the authenticated user (cf. `token`) are considered.
 
 ### container
 
