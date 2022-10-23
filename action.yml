@@ -24,6 +24,7 @@ inputs:
     description: 'Minimum age in days of container versions to prune'
     required: false
     default: 0
+    deprecationMessage: Replaced by input `keep-younger-than`. This input will be removed in v2.0.0.
   keep-last:
     description: 'Count of most recent, matching containers to exclude from pruning'
     required: false
@@ -58,9 +59,11 @@ inputs:
     description: 'Whether untagged container versions should be pruned'
     required: false
     default: false
+    deprecationMessage: Replaced by input `prune-untagged`. This input will be removed in v2.0.0.
   tag-regex:
     description: 'Regular expression matching tagged container versions which should be pruned'
     required: false
+    deprecationMessage: Replaced by input `prune-tags-regexes`. This input will be removed in v2.0.0.
 output:
   count:
     description: 'Count of container versions that were pruned'
