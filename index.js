@@ -76,7 +76,7 @@ const run = async () => {
     }
 
     core.setOutput('count', prunedList.length);
-    core.setOutput('prunedVersionIds', prunedList);
+    core.setOutput('prunedVersionIds', prunedList.map((version) => version.id));
     core.setOutput('dryRun', dryRun);
   } catch (error) {
     core.setFailed(error.message);

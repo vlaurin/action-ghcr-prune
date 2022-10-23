@@ -40,7 +40,7 @@ const prune = (pruneVersion) => async (pruningList) => {
     for (const version of pruningList) {
       core.info(`Pruning version #${version.id} named '${version.name}'...`);
       await pruneVersion(version);
-      pruned.push(version.id);
+      pruned.push(version);
     }
 
     core.endGroup();
