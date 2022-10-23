@@ -92,7 +92,7 @@ describe('prune', () => {
 
     const pruned = await prune(pruneVersion)(pruningList);
 
-    expect(pruned).toEqual([100001, 100000]);
+    expect(pruned).toEqual(pruningList);
     expect(pruneVersion).toHaveBeenCalledTimes(2);
     expect(pruneVersion).nthCalledWith(1, pruningList[0]);
     expect(pruneVersion).nthCalledWith(2, pruningList[1]);
@@ -126,7 +126,7 @@ describe('prune', () => {
 
     const pruned = await prune(pruneVersion)(pruningList);
 
-    expect(pruned).toEqual([100000]);
+    expect(pruned).toEqual([pruningList[0]]);
     expect(pruneVersion).toHaveBeenCalledTimes(2);
     expect(pruneVersion).nthCalledWith(1, pruningList[0]);
     expect(pruneVersion).nthCalledWith(2, pruningList[1]);
