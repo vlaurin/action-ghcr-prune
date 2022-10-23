@@ -25,6 +25,31 @@ const dryRunDelete = (version) => new Promise((resolve) => {
   resolve();
 });
 
+const writeSummary = async (container, dryRun, pruningVersions, prunedVersions) => {
+  const allPruned = pruningVersions.length === prunedVersions.length;
+
+  let summary = core.summary.addHeading(`Pruning versions for container: ${container}`, 2);
+
+  if (dryRun) {
+    summary = summary.addRaw(':warning: This is a dry run, no container versions were actually deleted.');
+  } else {
+    summary = summary.addRaw(`${allPruned ? ':white_check_mark:' : ':x:'} ${prunedVersions.length} out of ${pruningVersions.length} identified versions were pruned successfully.`);
+  }
+
+  await summary.addHeading('Pruned versions', 3)
+               .addRaw(`The following ${prunedVersions.length} versions were successfully pruned:`)
+               .addTable([
+                  [{data: 'ID', header: true}, {data: 'Name', header: true}, {data: 'Created at', header: true}, {data: 'Tags', header: true}],
+                  ...prunedVersions.map((version) => ([
+                    String(version.id),
+                    version.name,
+                    version.created_at.replace('T', ' '),
+                    version.metadata.container.tags.join(', '),
+                  ])),
+                ])
+                .write();
+};
+
 const run = async () => {
   try {
     const token = core.getInput('token');
@@ -70,6 +95,8 @@ const run = async () => {
     core.info(`Found a total of ${pruningList.length} versions to prune`);
 
     const prunedList = await prune(pruneVersion)(pruningList);
+
+    await writeSummary(container, dryRun, pruningList, prunedList);
 
     if (prunedList.length !== pruningList.length) {
       core.setFailed(`Failed to prune some versions: ${prunedList.length} out of ${pruningList.length} versions were pruned`);
