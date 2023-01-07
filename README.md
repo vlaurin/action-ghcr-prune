@@ -3,11 +3,11 @@ GitHub Action to prune/delete container versions from GitHub Container Registry 
 
 ## ⚠️ Word of caution
 
-By default, both `untagged` and `tag-regex` inputs are disabled and as result no versions will be matched for pruning. Either or both inputs must be explicitly configured for versions to be pruned. This behaviour helps to avoid pruning versions by mistake when first configuring this action.
+By default, both `prune-untagged` and `prune-tags-regexes` inputs are disabled and as result no versions will be matched for pruning. Either or both inputs must be explicitly configured for versions to be pruned. This behaviour helps to avoid pruning versions by mistake when first configuring this action.
 
 As this action is destructive, it's recommended to test any changes to the configuration of the action with a dry-run to ensure the expected versions are matched for pruning. For more details about dry-runs, see the [dry-run input](#dry-run).
 
-This is especially true when the [`tag-regex` input](#tag-regex) is used as the regular expression can easily match all versions of a container and result in complete deletion of all available versions.
+This is especially true when the [`prune-tags-regexes` input](#prune-tags-regexes) is used as regular expressions can easily match all versions of a container and result in complete deletion of all available versions.
 
 ## Quick start
 
@@ -20,9 +20,9 @@ steps:
       organization: your-org
       container: your-container
       dry-run: true # Dry-run first, then change to `false`
-      older-than: 7 # days
+      keep-younger-than: 7 # days
       keep-last: 2
-      untagged: true
+      prune-untagged: true
 ```
 
 ## Permissions
@@ -67,10 +67,6 @@ If neither are provided, then the packages of the authenticated user (cf. `token
 
 As this action is destructive, it's recommended to test any changes to the configuration of the action with a dry-run to ensure the expected versions are matched for pruning.
 
-### older-than
-
-**Optional** Minimum age in days of a version before it is pruned. Defaults to `0` which matches all versions of a container.
-
 ### keep-last
 
 **Optional** Count of most recent, matching containers to exclude from pruning. Defaults to `0` which means that all matching containers are pruned.
@@ -86,15 +82,22 @@ Matching is exact and case-sensitive.
 **Optional** List of regular expressions for tags to exclude from pruning, one per line.
 Each expression will be evaluated against all tags of a version. Any version with at least one tag matching the expression will be excluded from pruning.
 
-### untagged
+### keep-younger-than
+
+**Optional** Minimum age in days a version must have to qualify for pruning. All versions below that age at time of execution are excluded from pruning. Defaults to `0` which means no versions will be excluded from pruning.
+
+### prune-tags-regexes
+
+**Optional** List of regular expressions for tags to prune, one per line.
+Each expression will be evaluated against all tags of a version.
+Any version with at least one tag matching the expression will be pruned.
+Disabled by default (ie. no versions pruned based on tags).
+
+:warning: **Please note:** Extra care should be taken when using `prune-tags-regexes`, please make sure you've read the [Word of caution](#word-of-caution)
+
+### prune-untagged
 
 **Optional** Boolean controlling whether untagged versions should be pruned (`true`) or not (`false`). Defaults to `false`.
-
-### tag-regex
-
-**Optional** Regular expression which will be evaluated against all tags of a version. Any version with at least one tag matching the expression will be pruned. Disabled by defaults.
-
-:warning: **Please note:** Extra care should be taken when using `tag-regex`, please make sure you've read the [Word of caution](#word-of-caution)
 
 ## Outputs
 

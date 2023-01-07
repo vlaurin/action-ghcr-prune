@@ -7,22 +7,22 @@ const anyRegexMatch = (regexes) => (tags) =>
 
 const versionFilter = (options) => (version) => {
   const {
-    olderThan,
-    untagged,
-    tagRegex,
     keepTags,
     keepTagsRegexes,
+    keepYoungerThan,
+    pruneTagsRegexes,
+    pruneUntagged,
   } = options;
   const createdAt = new Date(version.created_at);
   const age = daysBetween(createdAt);
 
-  if (olderThan > age) {
+  if (keepYoungerThan > age) {
     return false;
   }
 
   const tags = version.metadata.container.tags;
 
-  if (untagged && (!tags || !tags.length)) {
+  if (pruneUntagged && (!tags || !tags.length)) {
     return true;
   }
 
@@ -34,7 +34,7 @@ const versionFilter = (options) => (version) => {
     return false;
   }
 
-  if (tagRegex && tags && tags.some((tag) => tag.match(tagRegex))) {
+  if (pruneTagsRegexes && tags && anyRegexMatch(pruneTagsRegexes)(tags)) {
     return true;
   }
 

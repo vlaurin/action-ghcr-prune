@@ -25,9 +25,9 @@ describe('versionFilter', () => {
     const version = Version(YEARS_AGO, ['tag1']);
 
     const prune = versionFilter({
-      olderThan: 0,
-      untagged: false,
-      tagRegex: undefined,
+      keepYoungerThan: 0,
+      pruneTagsRegexes: undefined,
+      pruneUntagged: false,
     })(version);
 
     expect(prune).toBe(false);
@@ -37,9 +37,9 @@ describe('versionFilter', () => {
     const version = Version(YEARS_AGO, []);
 
     const prune = versionFilter({
-      olderThan: 0,
-      untagged: true,
-      tagRegex: undefined,
+      keepYoungerThan: 0,
+      pruneTagsRegexes: undefined,
+      pruneUntagged: true,
     })(version);
 
     expect(prune).toBe(true);
@@ -49,9 +49,9 @@ describe('versionFilter', () => {
     const version = Version(YEARS_AGO, ['tag1']);
 
     const prune = versionFilter({
-      olderThan: 0,
-      untagged: true,
-      tagRegex: undefined,
+      keepYoungerThan: 0,
+      pruneTagsRegexes: undefined,
+      pruneUntagged: true,
     })(version);
 
     expect(prune).toBe(false);
@@ -61,9 +61,9 @@ describe('versionFilter', () => {
     const version = Version(TODAY, []);
 
     const prune = versionFilter({
-      olderThan: 3,
-      untagged: true,
-      tagRegex: undefined,
+      keepYoungerThan: 3,
+      pruneTagsRegexes: undefined,
+      pruneUntagged: true,
     })(version);
 
     expect(prune).toBe(false);
@@ -73,21 +73,43 @@ describe('versionFilter', () => {
     const version = Version(YEARS_AGO, ['tag-145', 'latest']);
 
     const prune = versionFilter({
-      olderThan: 0,
-      untagged: false,
-      tagRegex: '^tag-[0-9]{3}$',
+      keepYoungerThan: 0,
+      pruneTagsRegexes: ['^tag-[0-9]{3}$'],
+      pruneUntagged: false,
     })(version);
 
     expect(prune).toBe(true);
+  });
+
+  it('should prune all tagged versions with at least 1 tag matching any of the regexes', () => {
+    const versions = [
+      Version(YEARS_AGO, ['pr-123', 'pr-demo']),
+      Version(YEARS_AGO, ['pr-456', 'pr-alpha']),
+      Version(YEARS_AGO, ['pr-789', 'pr-beta']),
+    ]
+
+    const pruningFilter = versionFilter({
+      keepYoungerThan: 0,
+      pruneTagsRegexes: [
+        '^pr-123$',
+        'alpha$',
+      ],
+      pruneUntagged: false,
+    });
+
+    expect(versions.filter(pruningFilter)).toEqual([
+      Version(YEARS_AGO, ['pr-123', 'pr-demo']),
+      Version(YEARS_AGO, ['pr-456', 'pr-alpha']),
+    ]);
   });
 
   it('should NOT prune tagged version with no tag matching regex', () => {
     const version = Version(YEARS_AGO, ['tag-145x', 'latest']);
 
     const prune = versionFilter({
-      olderThan: 0,
-      untagged: false,
-      tagRegex: '^tag-[0-9]{3}$',
+      keepYoungerThan: 0,
+      pruneTagsRegexes: ['^tag-[0-9]{3}$'],
+      pruneUntagged: false,
     })(version);
 
     expect(prune).toBe(false);
@@ -97,9 +119,9 @@ describe('versionFilter', () => {
     const version = Version(TODAY, ['tag-145', 'latest']);
 
     const prune = versionFilter({
-      olderThan: 3,
-      untagged: false,
-      tagRegex: '^tag-[0-9]{3}$',
+      keepYoungerThan: 3,
+      pruneTagsRegexes: ['^tag-[0-9]{3}$'],
+      pruneUntagged: false,
     })(version);
 
     expect(prune).toBe(false);
@@ -112,9 +134,9 @@ describe('versionFilter', () => {
     ]
 
     const pruningFilter = versionFilter({
-      olderThan: 3,
-      untagged: true,
-      tagRegex: 'latest',
+      keepYoungerThan: 3,
+      pruneTagsRegexes: ['latest'],
+      pruneUntagged: true,
     });
 
     expect(versions.filter(pruningFilter)).toEqual(versions);
@@ -128,9 +150,9 @@ describe('versionFilter', () => {
     ]
 
     const pruningFilter = versionFilter({
-      olderThan: 0,
-      untagged: false,
-      tagRegex: '^pr-',
+      keepYoungerThan: 0,
+      pruneTagsRegexes: ['^pr-'],
+      pruneUntagged: false,
       keepTags: [
         'pr-demo',
         'pr-beta',
@@ -150,9 +172,9 @@ describe('versionFilter', () => {
     ]
 
     const pruningFilter = versionFilter({
-      olderThan: 0,
-      untagged: false,
-      tagRegex: '^pr-',
+      keepYoungerThan: 0,
+      pruneTagsRegexes: ['^pr-'],
+      pruneUntagged: false,
       keepTagsRegexes: [
         '^pr-d\\w+',
         '^pr-b\\w+',
