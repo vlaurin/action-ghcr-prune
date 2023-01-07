@@ -16,7 +16,7 @@ Pruning all untagged versions older than 7 days, except the 2 most recent:
 ```yml
 steps:
   - name: Prune
-    uses: vlaurin/action-ghcr-prune@0.5.0
+    uses: vlaurin/action-ghcr-prune@v0.5
     with:
       token: ${{ secrets.YOUR_TOKEN }}
       organization: your-org
@@ -103,7 +103,7 @@ For example, pruning all versions with tags starting with either `pr-` or `test-
 ```yml
 steps:
   - name: Prune
-    uses: vlaurin/action-ghcr-prune@0.5.0
+    uses: vlaurin/action-ghcr-prune@v0.5
     with:
       token: ${{ secrets.YOUR_TOKEN }}
       organization: your-org
@@ -135,7 +135,7 @@ For example, pruning all versions with tags starting with either `pr-` or `test-
 ```yml
 steps:
   - name: Prune
-    uses: vlaurin/action-ghcr-prune@0.5.0
+    uses: vlaurin/action-ghcr-prune@v0.5
     with:
       token: ${{ secrets.YOUR_TOKEN }}
       organization: your-org
