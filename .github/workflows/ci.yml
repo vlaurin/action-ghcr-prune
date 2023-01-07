@@ -34,6 +34,96 @@ jobs:
       - name: Clear node modules
         run: rm -rf node_modules/
 
+      - name: (Backward compatibility) Should prune untagged versions
+        uses: ./ # Itself
+        id: legacy_test_prune_untagged
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
+          container: test-action-ghcr-prune
+          dry-run: true
+          untagged: true
+          keep-last: 1
+
+      - name: (Backward compatibility) Expect 2 untagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.legacy_test_prune_untagged.outputs.count }};
+            const expectedCount = 2;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.legacy_test_prune_untagged.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452193,15452086]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
+
+      - name: (Backward compatibility) Should prune tagged versions without exclusions
+        uses: ./ # Itself
+        id: legacy_test_prune_tagged
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
+          container: test-action-ghcr-prune
+          dry-run: true
+          tag-regex: ^pr-
+          keep-tags: |
+            pr-demo
+
+      - name: (Backward compatibility) Expect 3 tagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.legacy_test_prune_tagged.outputs.count }};
+            const expectedCount = 3;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.legacy_test_prune_tagged.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452486,15452460,15452388]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
+
+      - name: (Backward compatibility) Should prune tagged versions without RegEx exclusions
+        uses: ./ # Itself
+        id: legacy_test_prune_tagged_keep_tags_regexes
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
+          container: test-action-ghcr-prune
+          dry-run: true
+          tag-regex: ^pr-
+          keep-tags-regexes: |
+            ^pr-[a-z]+
+            ^pr-\d\d2
+
+      - name: (Backward compatibility) Expect 2 tagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.legacy_test_prune_tagged_keep_tags_regexes.outputs.count }};
+            const expectedCount = 2;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.legacy_test_prune_tagged_keep_tags_regexes.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452486,15452388]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
+
       - name: Should prune untagged versions
         uses: ./ # Itself
         id: test_prune_untagged
@@ -42,7 +132,7 @@ jobs:
           user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
-          untagged: true
+          prune-untagged: true
           keep-last: 1
 
       - name: Expect 2 untagged versions to be pruned
@@ -71,7 +161,7 @@ jobs:
           user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
-          tag-regex: ^pr-
+          prune-tags-regexes: ^pr-
           keep-tags: |
             pr-demo
 
@@ -101,7 +191,7 @@ jobs:
           user: vlaurin
           container: test-action-ghcr-prune
           dry-run: true
-          tag-regex: ^pr-
+          prune-tags-regexes: ^pr-
           keep-tags-regexes: |
             ^pr-[a-z]+
             ^pr-\d\d2
@@ -119,6 +209,37 @@ jobs:
 
             const actualPruned = '${{ steps.test_prune_tagged_keep_tags_regexes.outputs.prunedVersionIds }}';
             const expectedPruned = '[15452486,15452388]';
+
+            if (actualPruned !== expectedPruned) {
+              core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)
+            }
+
+      - name: Should prune tagged versions from many regexes
+        uses: ./ # Itself
+        id: test_prune_many_tags_regexes
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: vlaurin
+          container: test-action-ghcr-prune
+          dry-run: true
+          prune-tags-regexes: |
+            ^pr-[a-z]+$
+            ^pr-\d{3}$
+          keep-tags-regexes: 2$
+
+      - name: Expect 3 tagged versions to be pruned
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const actualCount = ${{ steps.test_prune_many_tags_regexes.outputs.count }};
+            const expectedCount = 3;
+
+            if (actualCount !== expectedCount) {
+              core.setFailed(`Expected ${expectedCount} versions to be pruned but was: ${actualCount}`)
+            }
+
+            const actualPruned = '${{ steps.test_prune_many_tags_regexes.outputs.prunedVersionIds }}';
+            const expectedPruned = '[15452525,15452486,15452388]';
 
             if (actualPruned !== expectedPruned) {
               core.setFailed(`Expected ${expectedPruned} to be pruned but was: ${actualPruned}`)

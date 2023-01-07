@@ -40,6 +40,20 @@ inputs:
       Each expression will be evaluated against all tags of a version.
       Any version with at least one tag matching the expression will be excluded from pruning.
     required: false
+  keep-younger-than:
+    description: 'Minimum age in days of container versions that will be pruned'
+    required: false
+    default: 0
+  prune-tags-regexes:
+    description: |
+      List of regular expressions for tags to include in pruning, one per line.
+      Each expression will be evaluated against all tags of a version.
+      Any version with at least one tag matching the expression will be included in pruning.
+    required: false
+  prune-untagged:
+    description: 'Whether untagged container versions should be pruned'
+    required: false
+    default: false
   untagged:
     description: 'Whether untagged container versions should be pruned'
     required: false

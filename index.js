@@ -66,12 +66,16 @@ const run = async () => {
     const dryRun = asBoolean(core.getInput('dry-run'));
 
     const keepLast = Number(core.getInput('keep-last'));
+
+    // For backward compatibility of deprecated input `tag-regex`
+    const legacyTagRegex = core.getInput('tag-regex') ? [core.getInput('tag-regex')] : null;
+
     const filterOptions = {
-      olderThan: Number(core.getInput('older-than')),
-      untagged: asBoolean(core.getInput('untagged')),
-      tagRegex: core.getInput('tag-regex'),
       keepTags: core.getMultilineInput('keep-tags'),
       keepTagsRegexes: core.getMultilineInput('keep-tags-regexes'),
+      keepYoungerThan: Number(core.getInput('keep-younger-than')) || Number(core.getInput('older-than')),
+      pruneTagsRegexes: core.getInput('prune-tags-regexes') ? core.getMultilineInput('prune-tags-regexes') : legacyTagRegex,
+      pruneUntagged: asBoolean(core.getInput('prune-untagged')) || asBoolean(core.getInput('untagged')),
     };
 
     const octokit = github.getOctokit(token);
