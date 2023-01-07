@@ -1,4 +1,5 @@
 # action-ghcr-prune
+
 GitHub Action to prune/delete container versions from GitHub Container Registry (ghcr.io).
 
 ## ⚠️ Word of caution
@@ -11,6 +12,7 @@ This is especially true when the [`prune-tags-regexes` input](#prune-tags-regexe
 
 ## Quick start
 
+Pruning all untagged versions older than 7 days, except the 2 most recent:
 ```yml
 steps:
   - name: Prune
@@ -24,6 +26,8 @@ steps:
       keep-last: 2
       prune-untagged: true
 ```
+
+For more pruning strategies, [see filters](#Filters).
 
 ## Permissions
 
@@ -67,26 +71,57 @@ If neither are provided, then the packages of the authenticated user (cf. `token
 
 As this action is destructive, it's recommended to test any changes to the configuration of the action with a dry-run to ensure the expected versions are matched for pruning.
 
-### keep-last
+### :mag: Filters
+
+This action supports 2 types of filters:
+
+- Exclusion filters, prefixed with `keep-`, exclude versions from pruning, preventing them from being deleted.
+- Inclusion filters, prefixed with `prune-`, select the versions to prune.
+
+**Exclusion filters always take precedence over inclusion filters.**
+This means that if a version of a container is matched by both an exclusion and an inclusion filter, the exclusion will take priority and the version will not be pruned.
+
+Versions that are not matched by any filter are preserved.
+
+#### keep-last
 
 **Optional** Count of most recent, matching containers to exclude from pruning. Defaults to `0` which means that all matching containers are pruned.
 
-### keep-tags
+#### keep-tags
 
 **Optional** List of tags to exclude from pruning, one per line.
 Any version with at least one matching tag will be excluded.
 Matching is exact and case-sensitive.
 
-### keep-tags-regexes
+#### keep-tags-regexes
 
 **Optional** List of regular expressions for tags to exclude from pruning, one per line.
 Each expression will be evaluated against all tags of a version. Any version with at least one tag matching the expression will be excluded from pruning.
 
-### keep-younger-than
+For example, pruning all versions with tags starting with either `pr-` or `test-`, except the ones ending with numbers 42 or 1337:
+
+```yml
+steps:
+  - name: Prune
+    uses: vlaurin/action-ghcr-prune@main
+    with:
+      token: ${{ secrets.YOUR_TOKEN }}
+      organization: your-org
+      container: your-container
+      dry-run: true # Dry-run first, then change to `false`
+      keep-tags-regexes: |
+        42$
+        1337$
+      prune-tags-regexes: |
+        ^pr-
+        ^test-
+```
+
+#### keep-younger-than
 
 **Optional** Minimum age in days a version must have to qualify for pruning. All versions below that age at time of execution are excluded from pruning. Defaults to `0` which means no versions will be excluded from pruning.
 
-### prune-tags-regexes
+#### prune-tags-regexes
 
 **Optional** List of regular expressions for tags to prune, one per line.
 Each expression will be evaluated against all tags of a version.
@@ -95,7 +130,23 @@ Disabled by default (ie. no versions pruned based on tags).
 
 :warning: **Please note:** Extra care should be taken when using `prune-tags-regexes`, please make sure you've read the [Word of caution](#word-of-caution)
 
-### prune-untagged
+
+For example, pruning all versions with tags starting with either `pr-` or `test-`:
+```yml
+steps:
+  - name: Prune
+    uses: vlaurin/action-ghcr-prune@main
+    with:
+      token: ${{ secrets.YOUR_TOKEN }}
+      organization: your-org
+      container: your-container
+      dry-run: true # Dry-run first, then change to `false`
+      prune-tags-regexes: |
+        ^pr-
+        ^test-
+```
+
+#### prune-untagged
 
 **Optional** Boolean controlling whether untagged versions should be pruned (`true`) or not (`false`). Defaults to `false`.
 
