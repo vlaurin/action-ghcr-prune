@@ -68,5 +68,5 @@ output:
   count:
     description: 'Count of container versions that were pruned'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
