@@ -8,7 +8,7 @@ const {
   listOrgContainerVersions,
   listUserContainerVersions,
 } = require('./src/octokit');
-const {getPruningList, prune} = require('./src/pruning');
+const {getMulitPlatPruningList, getPruningList, prune} = require('./src/pruning');
 const {versionFilter} = require('./src/version-filter');
 
 const asBoolean = (v) => 'true' == String(v);
@@ -95,6 +95,13 @@ const run = async () => {
     const filterVersion = versionFilter(filterOptions);
 
     const pruningList = await getPruningList(listVersions, filterVersion)(keepLast);
+
+    // TODO: Replace with check for option to prune multi-platform images
+    if(1==1)
+    {
+      const owner = organization ? organization : user
+      await getMultiPlatPruningList(listVersions, pruningList, owner, token, container);
+    }
 
     core.info(`Found a total of ${pruningList.length} versions to prune`);
 

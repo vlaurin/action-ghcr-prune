@@ -1,8 +1,73 @@
 const core = require('@actions/core');
+const http = require('@actions/http-client');
 
 const PAGE_SIZE = 100;
 
 const sortByVersionCreationDesc = (first, second) => - first.created_at.localeCompare(second.created_at);
+
+async function getMultiPlatPruningList(listVersions, pruningList, owner, token, container) {
+  core.info('Crawling through pruning list for multi-platform images...');
+
+  for (let image of pruningList)
+  {
+    let manifest = await getManifest(owner, container, image.metadata.container.tags[0], token);
+    if (manifest.mediaType != "application/vnd.docker.distribution.manifest.list.v2+json")
+    {
+      //not a multi-plat image continue
+      continue;
+    }
+
+    for (let subimage in manifest.manifests)
+    {
+      container = getContainerId(listVersions, subimage.digest)
+      pruningList.push(container)
+    }
+
+  }
+
+}
+
+async function getManifest(owner, container, tag, token) {
+  try {
+    const url = `https://ghcr.io/v2/${owner}/${container}/manifests/${tag}`;
+
+    const client = new http.HttpClient('github-action');
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+
+    const response = await client.get(url, headers);
+    const responseBody = await response.readBody();
+
+    core.info(responseBody);
+
+    return response
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+async function getContainerId(listVersions, digest) {
+  let page = 1;
+  let lastPageSize = 0;
+
+  do {
+    const {data: versions} = await listVersions(PAGE_SIZE, page);
+    lastPageSize = versions.length;
+
+    const containerID = versions.find((version) => version.name == digest);
+
+    if (containerID) {
+      return containerID
+    }
+
+    page++;
+  } while (lastPageSize >= PAGE_SIZE);
+
+  core.info(`No image found with digest ${digest}`);
+  return containerID;
+}
+
 
 const getPruningList = (listVersions, pruningFilter) => async (keepLast = 0) => {
   let pruningList = [];
