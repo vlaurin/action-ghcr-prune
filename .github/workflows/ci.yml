@@ -46,7 +46,7 @@ jobs:
           keep-last: 1
 
       - name: (Backward compatibility) Expect 2 untagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.legacy_test_prune_untagged.outputs.count }};
@@ -76,7 +76,7 @@ jobs:
             pr-demo
 
       - name: (Backward compatibility) Expect 3 tagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.legacy_test_prune_tagged.outputs.count }};
@@ -107,7 +107,7 @@ jobs:
             ^pr-\d\d2
 
       - name: (Backward compatibility) Expect 2 tagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.legacy_test_prune_tagged_keep_tags_regexes.outputs.count }};
@@ -136,7 +136,7 @@ jobs:
           keep-last: 1
 
       - name: Expect 2 untagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.test_prune_untagged.outputs.count }};
@@ -166,7 +166,7 @@ jobs:
             pr-demo
 
       - name: Expect 3 tagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.test_prune_tagged.outputs.count }};
@@ -197,7 +197,7 @@ jobs:
             ^pr-\d\d2
 
       - name: Expect 2 tagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.test_prune_tagged_keep_tags_regexes.outputs.count }};
@@ -228,7 +228,7 @@ jobs:
           keep-tags-regexes: 2$
 
       - name: Expect 3 tagged versions to be pruned
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const actualCount = ${{ steps.test_prune_many_tags_regexes.outputs.count }};
